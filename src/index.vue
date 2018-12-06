@@ -1,10 +1,5 @@
 <style lang="less" scoped>
-    #changeContab{
-        .language{
-            position: absolute;
-            right: 25px;
-            z-index: 1;
-        }
+    #change_contab{
         .el-tabs{
             box-shadow: none;
         }
@@ -34,49 +29,14 @@
     }
 </style>
 <template>
-    <div id="changeContab">
-        <el-button class="language" type="text" @click="i18n=(i18n==='en'?'cn':'en')">{{i18n}}</el-button>
+    <div id="change_contab">
         <el-tabs type="border-card">
-            <el-tab-pane>
-                <span slot="label"><i class="el-icon-date"></i> {{text.Seconds.name}}</span>
-                <div class="tabBody">
-                    <el-row>
-                        <el-radio v-model="second.cronEvery" label="1">{{text.Seconds.every}}</el-radio>
-                    </el-row>
-                    <el-row>
-                        <el-radio v-model="second.cronEvery" label="2">{{text.Seconds.interval[0]}}
-                            <el-input-number size="small" v-model="second.incrementIncrement" :min="1" :max="60"></el-input-number>
-                            {{text.Seconds.interval[1]||''}}
-                            <el-input-number size="small" v-model="second.incrementStart" :min="0" :max="59"></el-input-number>
-                            {{text.Seconds.interval[2]||''}}
-                        </el-radio>
-                    </el-row>
-                    <el-row>
-                        <el-radio class="long" v-model="second.cronEvery" label="3">{{text.Seconds.specific}}
-                            <el-select size="small" multiple v-model="second.specificSpecific">
-                                <el-option v-for="val in 60" :key="$index" :value="val-1">{{val-1}}</el-option>
-                            </el-select>
-                        </el-radio>
-                    </el-row>
-                    <el-row>
-                        <el-radio v-model="second.cronEvery" label="4">{{text.Seconds.cycle[0]}}
-                            <el-input-number size="small" v-model="second.rangeStart" :min="1" :max="60"></el-input-number>
-                            {{text.Seconds.cycle[1]||''}}
-                            <el-input-number size="small" v-model="second.rangeEnd" :min="0" :max="59"></el-input-number>
-                            {{text.Seconds.cycle[2]||''}}
-                        </el-radio>
-                    </el-row>
-                </div>
-            </el-tab-pane>
             <el-tab-pane>
                 <span slot="label"><i class="el-icon-date"></i> {{text.Minutes.name}}</span>
                 <div class="tabBody">
                     <el-row>
-                        <el-radio v-model="minute.cronEvery" label="1">{{text.Minutes.every}}</el-radio>
-                    </el-row>
-                    <el-row>
                         <el-radio v-model="minute.cronEvery" label="2">{{text.Minutes.interval[0]}}
-                            <el-input-number size="small" v-model="minute.incrementIncrement" :min="1" :max="60"></el-input-number>
+                            <el-input-number size="small" v-model="minute.incrementIncrement" :min="1" :max="59"></el-input-number>
                             {{text.Minutes.interval[1]}}
                             <el-input-number size="small" v-model="minute.incrementStart" :min="0" :max="59"></el-input-number>
                             {{text.Minutes.interval[2]||''}}
@@ -359,28 +319,10 @@
     },
     computed: {
         text(){
-            return Language[this.i18n||'cn']
+            return Language[this.i18n||'en']
         },
         secondsText() {
-            let seconds = '';
-            let cronEvery=this.second.cronEvery;
-            switch (cronEvery.toString()){
-                case '1':
-                    seconds = '*';
-                    break;
-                case '2':
-                    seconds = this.second.incrementStart+'/'+this.second.incrementIncrement;
-                    break;
-                case '3':
-                    this.second.specificSpecific.map(val=> {
-                        seconds += val+','
-                    });
-                    seconds = seconds.slice(0, -1);
-                    break;
-                case '4':
-                    seconds = this.second.rangeStart+'-'+this.second.rangeEnd;
-                    break;
-            }
+            let seconds = '0';
             return seconds;
         },
         minutesText() {
@@ -541,7 +483,11 @@
             return years;
         },
         cron(){
-            return `${this.secondsText||'*'} ${this.minutesText||'*'} ${this.hoursText||'*'} ${this.daysText||'*'} ${this.monthsText||'*'} ${this.weeksText||'?'} ${this.yearsText||'*'}`
+            const cronText = `${this.secondsText||'*'} ${this.minutesText||'*'} ${this.hoursText||'*'} ${this.daysText||'*'} ${this.monthsText||'*'} ${this.weeksText||'?'} ${this.yearsText||'*'}`;
+
+            this.$emit('cron-updated', cronText);
+
+            return cronText;
         },
     },
     methods: {
@@ -553,7 +499,7 @@
             this.close();
         },
         close(){
-            this.$emit('close')
+            this.$emit('close');
         },
         rest(data){
             for(let i in data){
