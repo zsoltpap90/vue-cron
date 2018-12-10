@@ -7,6 +7,7 @@
     "dev": "cooking watch -p -c /config/cooking.dev.js",
     "dist": "cooking build -p -c /config/cooking.dev.js",
     "build": "cooking build -p -c /config/cooking.build.js",
+    "deploy": "npm run dist && npm run build && git add -A && git commit -m 'Updated vue-cron' && git push",
     "npm": "npm run build && git add . && git commit -m build&& npm version patch && npm publish && git push && git push origin --tags"
   },
   "author": "",

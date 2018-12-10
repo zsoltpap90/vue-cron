@@ -327,7 +327,7 @@
                     break;
                 case '3':
                     const increment = this.day.incrementStart + '-31';
-                    days = (increment === '0-31' ? '*' : increment) + '/' + this.day.incrementIncrement;
+                    days = (increment === '1-31' ? '*' : increment) + '/' + this.day.incrementIncrement;
                     break;
                 case '5':
                     this.day.specificSpecific.map(val=> {
@@ -393,7 +393,8 @@
                     months = '*';
                     break;
                 case '2':
-                    months = this.month.incrementStart+'-12/'+this.month.incrementIncrement;
+                    const increment = this.month.incrementStart + '-12';
+                    months = (increment === '1-12' ? '*' : increment) + '/' + this.month.incrementIncrement;
                     break;
                 case '3':
                     this.month.specificSpecific.map(val=> {
