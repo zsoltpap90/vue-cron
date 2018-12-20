@@ -208,20 +208,20 @@
     data(){
         return {
             minute:{
-                cronEvery:'2',
+                cronEvery:'3',
                 incrementStart:'0',
                 incrementIncrement:'5',
                 rangeStart:'',
                 rangeEnd:'',
-                specificSpecific:[],
+                specificSpecific:[0],
             },
             hour:{
-                cronEvery:'1',
+                cronEvery:'3',
                 incrementStart:'0',
                 incrementIncrement:'5',
                 rangeStart:'',
                 rangeEnd:'',
-                specificSpecific:[],
+                specificSpecific:[9],
             },
             day:{
                 cronEvery:'1',
