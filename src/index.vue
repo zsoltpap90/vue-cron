@@ -36,7 +36,7 @@
                 <div class="tabBody">
                     <el-row>
                         <el-radio v-model="minute.cronEvery" label="2">{{text.Minutes.interval[0]}}
-                            <el-input-number size="small" v-model="minute.incrementIncrement" :min="1" :max="59"></el-input-number>
+                            <el-input-number size="small" v-model="minute.incrementIncrement" :min="5" :max="59"></el-input-number>
                             {{text.Minutes.interval[1]}}
                             <el-input-number size="small" v-model="minute.incrementStart" :min="0" :max="59"></el-input-number>
                             {{text.Minutes.interval[2]||''}}
