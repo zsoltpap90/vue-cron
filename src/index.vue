@@ -204,8 +204,9 @@
     import Language from '../language/index'
     export default {
     name:'vueCron',
-    props:['data','i18n'],
+        props:['data', 'expression', 'i18n'],
     data(){
+
         return {
             minute:{
                 cronEvery:'3',
@@ -244,8 +245,8 @@
             },
             month:{
                 cronEvery:'1',
-                incrementStart:'3',
-                incrementIncrement:'5',
+                    incrementStart:'1',
+                    incrementIncrement:'2',
                 rangeStart:'',
                 rangeEnd:'',
                 specificSpecific:[],
@@ -256,7 +257,8 @@
                 day:'',
                 month:'',
                 Week:'',
-            }
+                },
+                defaultSet: false
         }
     },
     watch:{
@@ -269,12 +271,10 @@
             return Language[this.i18n||'en']
         },
         minutesText() {
+
             let minutes = '';
             let cronEvery=this.minute.cronEvery;
             switch (cronEvery.toString()){
-                case '1':
-                    minutes = '*';
-                    break;
                 case '2':
                     const increment = this.minute.incrementStart+'-59';
                     minutes = (increment === '0-59' ? '*' : increment) + '/' + this.minute.incrementIncrement;
@@ -284,9 +284,6 @@
                         minutes += val+','
                     });
                     minutes = minutes.slice(0, -1);
-                    break;
-                case '4':
-                    minutes = this.minute.rangeStart+'-'+this.minute.rangeEnd;
                     break;
             }
             return minutes;
@@ -411,12 +408,162 @@
         cron(){
             const cronText = `${this.minutesText||'*'} ${this.hoursText||'*'} ${this.daysText||'*'} ${this.monthsText||'*'} ${this.weeksText||'*'}`;
 
+                if (this.defaultSet === false && this.expression && this.expression !== cronText) {
+                    this.parseExpression(this.expression);
+                    this.defaultSet = true;
+                }
+
             this.$emit('cron-updated', cronText);
 
             return cronText;
         },
     },
     methods: {
+            parseMinute(minute) {
+                if (minute.indexOf('/') > 0) {
+                    this.minute.cronEvery = '2';
+
+                    const parts = minute.split('/');
+
+                    if (parts[0] === '*') {
+                        this.minute.incrementStart = '0';
+                    } else if (parts[0].match(/\d+-\d+/)) {
+                        const match = parts[0].match(/(\d+)-\d+/);
+                        this.minute.incrementStart = match[1] || '0';
+                    }
+
+                    if (parseInt(parts[1]) > 0) {
+                        this.minute.incrementIncrement = parts[1];
+                    }
+                } else if (minute.indexOf(',') > 0 || (minute.indexOf(',') === -1 && parseInt(minute) >= 0)) {
+                    this.minute.cronEvery = '3';
+                    this.minute.specificSpecific = minute.split(',').map(m => parseInt(m.trim())).filter(h => !isNaN(h));
+                }
+            },
+            parseHour(hour) {
+                if (hour === '*') {
+                    this.hour.cronEvery = '1';
+                } else if (hour.indexOf('/') > 0) {
+                    this.hour.cronEvery = '2';
+
+                    const parts = hour.split('/');
+
+                    if (parts[0] === '*') {
+                        this.hour.incrementStart = '0';
+                    } else if (parts[0].match(/\d+-\d+/)) {
+                        const match = parts[0].match(/(\d+)-\d+/);
+                        this.hour.incrementStart = match[1] || '0';
+                    }
+
+                    if (parseInt(parts[1]) > 0) {
+                        this.minute.incrementIncrement = parts[1];
+                    }
+                } else if (hour.match(/\d+-\d+/)) {
+                    const parts = hour.split('-');
+                    this.hour.cronEvery = '4';
+                    this.hour.rangeStart = parts[0] || '0';
+                    this.hour.rangeEnd   = parts[1] || '23';
+                } else if (hour.indexOf(',') > 0 || (hour.indexOf(',') === -1 && parseInt(hour) >= 0)) {
+                    this.hour.cronEvery = '3';
+                    this.hour.specificSpecific = hour.split(',').map(h => parseInt(h.trim())).filter(h => !isNaN(h));
+                }
+
+            },
+            parseDay(day) {
+                if (day === '*') {
+                    this.day.cronEvery = '1';
+                } else if (day.indexOf('/') > 0) {
+                    this.day.cronEvery = '3';
+
+                    const parts = day.split('/');
+
+                    if (parts[0] === '*') {
+                        this.day.incrementStart = '1';
+                    } else if (parts[0].match(/\d+-\d+/)) {
+                        const match = parts[0].match(/(\d+)-\d+/);
+                        this.day.incrementStart = match[1] || '1';
+                    }
+
+                    if (parseInt(parts[1]) > 0) {
+                        this.day.incrementIncrement = parts[1];
+                    }
+                } else if (day.indexOf(',') > 0 || (day.indexOf(',') === -1 && parseInt(day) >= 1)) {
+                    this.day.cronEvery = '5';
+                    this.day.specificSpecific = day.split(',').map(h => parseInt(h.trim())).filter(h => !isNaN(h));
+                }
+            },
+            parseMonth(month) {
+                if (month === '*') {
+                    this.month.cronEvery = '1';
+                } else if (month.indexOf('/') > 0) {
+                    this.hour.cronEvery = '1';
+
+                    const parts = month.split('/');
+
+                    if (parts[0] === '*') {
+                        this.month.incrementStart = '1';
+                    } else if (parts[0].match(/\d+-\d+/)) {
+                        const match = parts[0].match(/(\d+)-\d+/);
+                        this.month.incrementStart = match[1] || '1';
+                    }
+
+                    if (parseInt(parts[1]) > 0) {
+                        this.month.incrementIncrement = parts[1];
+                    }
+                } else if (month.match(/\d+-\d+/)) {
+                    const parts = month.split('-');
+                    this.month.cronEvery = '4';
+                    this.month.rangeStart = parts[0] || '1';
+                    this.month.rangeEnd   = parts[1] || '12';
+                } else if (month.indexOf(',') > 0 || (month.indexOf(',') === -1 && parseInt(month) >= 1)) {
+                    this.month.cronEvery = '3';
+                    this.month.specificSpecific = month.split(',').map(h => parseInt(h.trim())).filter(h => !isNaN(h));
+                }
+            },
+            parseWeek(week) {
+                if (week === '*') {
+                    // do nothing
+                } else if (week.indexOf('/') > 0) {
+                    this.day.cronEvery = '2';
+
+                    const parts = week.split('/');
+
+                    if (parts[0] === '*') {
+                        this.week.incrementStart = '1';
+                    } else if (parts[0].match(/\d+-\d+/)) {
+                        const match = parts[0].match(/(\d+)-\d+/);
+                        this.week.incrementStart = match[1] || '1';
+                    }
+
+                    if (parseInt(parts[1]) > 0) {
+                        this.week.incrementIncrement = parts[1];
+                    }
+                } else if (week.indexOf(',') > 0 || (week.indexOf(',') === -1 && parseInt(week) >= 1)) {
+                    this.day.cronEvery = '4';
+                    this.week.specificSpecific = week.split(',').map(h => parseInt(h.trim())).filter(h => !isNaN(h));
+                }
+            },
+            parseExpression(expression) {
+                const elements = expression.split(' ');
+                console.log('elements', elements);
+                if (elements.some(e => e === '') === true) {
+                    return;
+                }
+                if (elements.length !== 5) {
+                    return;
+                }
+                console.log('parsing input');
+
+                try {
+                    this.parseMinute(elements[0]);
+                    this.parseHour(elements[1]);
+                    this.parseDay(elements[2]);
+                    this.parseMonth(elements[3]);
+                    this.parseWeek(elements[4]);
+                } catch (e) {
+                    // silent fail
+                }
+            },
         getValue(){
             return this.cron;
         },
