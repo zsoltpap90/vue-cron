@@ -406,17 +406,21 @@
             return months;
         },
         cron(){
-            const cronText = `${this.minutesText||'*'} ${this.hoursText||'*'} ${this.daysText||'*'} ${this.monthsText||'*'} ${this.weeksText||'*'}`;
+            let cronText = '';
+            if (this.defaultCronExpression) {
+                cronText = `${this.minutesText||'*'} ${this.hoursText||'*'} ${this.daysText||'*'} ${this.monthsText||'*'} ${this.weeksText||'*'}`;
 
-                if (this.defaultSet === false && this.expression && this.expression !== cronText) {
-                    this.parseExpression(this.expression);
-                    this.defaultSet = true;
-                }
-
-            this.$emit('cron-updated', cronText);
-
+                this.$emit('cron-updated', cronText);
+            }
             return cronText;
         },
+        defaultCronExpression() {
+            if (!this.defaultSet && this.expression) {
+                this.parseExpression(this.expression);
+                this.defaultSet = !this.defaultSet;
+            }
+            return this.defaultSet;
+        }
     },
     methods: {
             parseMinute(minute) {
