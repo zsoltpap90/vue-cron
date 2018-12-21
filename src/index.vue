@@ -76,7 +76,7 @@
                         <el-radio v-model="hour.cronEvery" label="4">{{text.Hours.cycle[0]}}
                             <el-input-number size="small" v-model="hour.rangeStart" :min="0" :max="23"></el-input-number>
                             {{text.Hours.cycle[1]}}
-                            <el-input-number size="small" v-model="hour.rangeEnd" :min="hour.rangeStart || 0" :max="23"></el-input-number>
+                            <el-input-number size="small" v-model="hour.rangeEnd" :min="parseInt(hour.rangeStart) || 0" :max="23"></el-input-number>
                             {{text.Hours.cycle[2]}}
                         </el-radio>
                     </el-row>
