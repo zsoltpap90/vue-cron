@@ -460,7 +460,7 @@
                     }
 
                     if (parseInt(parts[1]) > 0) {
-                        this.minute.incrementIncrement = parts[1];
+                        this.hour.incrementIncrement = parts[1];
                     }
                 } else if (hour.match(/\d+-\d+/)) {
                     const parts = hour.split('-');
@@ -500,7 +500,7 @@
                 if (month === '*') {
                     this.month.cronEvery = '1';
                 } else if (month.indexOf('/') > 0) {
-                    this.hour.cronEvery = '1';
+                    this.month.cronEvery = '1';
 
                     const parts = month.split('/');
 
