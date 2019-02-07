@@ -498,7 +498,7 @@
                 if (month === '*') {
                     this.month.cronEvery = '1';
                 } else if (month.indexOf('/') > 0) {
-                    this.month.cronEvery = '1';
+                    this.month.cronEvery = '2';
 
                     const parts = month.split('/');
 
