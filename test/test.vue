@@ -14,8 +14,8 @@
     <div class="cron">
         <h1>vue-cron</h1>
         <el-popover v-model="cronPopover">
-            <vueCron :data="cron" @change="changeCron" @close="cronPopover=false" i18n="en"></vueCron>
-            <el-input slot="reference" @click="cronPopover=true" v-model="cron" placeholder="* * * * *"></el-input>
+            <vueCron :expression="cron" @change="changeCron" @close="cronPopover=false" i18n="en"></vueCron>
+            <el-input slot="reference" v-model="cron" placeholder="* * * * *"></el-input>
         </el-popover>
 
     </div>
@@ -27,7 +27,7 @@
         data(){
             return {
                 cronPopover:false,
-                cron:''
+                cron:'0 2-23 * * *'
             }
         },
         components: {  },
@@ -36,6 +36,13 @@
             changeCron(val){
                 this.cron=val
             },
+        },
+        watch: {
+            cron: {
+                handler(value) {
+                    console.log("WATCH CRON: " + value);
+                }
+            }
         },
         mounted(){
 

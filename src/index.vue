@@ -465,8 +465,8 @@
                 } else if (hour.match(/\d+-\d+/)) {
                     const parts = hour.split('-');
                     this.hour.cronEvery = '4';
-                    this.hour.rangeStart = `${parts[0]}` || '0';
-                    this.hour.rangeEnd   = `${parts[1]}` || '23';
+                    this.hour.rangeStart = parts[0] || '0';
+                    this.hour.rangeEnd   = parts[1] || '23';
                 } else if (hour.indexOf(',') > 0 || (hour.indexOf(',') === -1 && parseInt(hour) >= 0)) {
                     this.hour.cronEvery = '3';
                     this.hour.specificSpecific = hour.split(',').map(h => parseInt(h.trim())).filter(h => !isNaN(h));
