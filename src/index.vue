@@ -262,6 +262,14 @@
         }
     },
     watch:{
+        expression: {
+            handler(newExpression, oldExpression) {
+                if (newExpression !== oldExpression) {
+                    this.parseExpression(newExpression);
+                }
+            },
+            immediate: true
+        },
         data(){
             this.rest(this.$data);
         }
@@ -406,20 +414,10 @@
             return months;
         },
         cron(){
-            let cronText = '';
-            if (this.defaultCronExpression) {
-                cronText = `${this.minutesText||'*'} ${this.hoursText||'*'} ${this.daysText||'*'} ${this.monthsText||'*'} ${this.weeksText||'*'}`;
+            const cronText = `${this.minutesText||'*'} ${this.hoursText||'*'} ${this.daysText||'*'} ${this.monthsText||'*'} ${this.weeksText||'*'}`;
 
-                this.$emit('cron-updated', cronText);
-            }
+            this.$emit('cron-updated', cronText);
             return cronText;
-        },
-        defaultCronExpression() {
-            if (!this.defaultSet && this.expression) {
-                this.parseExpression(this.expression);
-                this.defaultSet = !this.defaultSet;
-            }
-            return this.defaultSet;
         }
     },
     methods: {
@@ -549,14 +547,14 @@
             },
             parseExpression(expression) {
                 const elements = expression.split(' ');
-                console.log('elements', elements);
+
                 if (elements.some(e => e === '') === true) {
                     return;
                 }
+
                 if (elements.length !== 5) {
                     return;
                 }
-                console.log('parsing input');
 
                 try {
                     this.parseMinute(elements[0]);
